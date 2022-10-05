@@ -12,6 +12,24 @@ beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
+test('null scopes work as expected', function () {
+    BouncerFacade::dontCache();
+
+    // The user doesn't have the permission
+    $this->assertFalse($this->user->can('view', User::class));
+
+    // Give the user permission in the current scope (1)
+    $this->user->allow('view', User::class);
+
+    // They should have permission now
+    $this->assertTrue($this->user->can('view', User::class));
+
+    BouncerFacade::scope()->remove();
+
+    // The user shouldn't have permission without the correct scope
+    $this->assertFalse($this->user->can('view', User::class));
+});
+
 it('can change permissions correctly', function (array $data) {
     $this->postJson(route('users.permissions', $this->user), $data)
         ->assertOk();
