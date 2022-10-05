@@ -31,7 +31,9 @@ it('can change permissions correctly', function (array $data) {
 
     // This should always be false because the permission was added with a scope
     // and now our scope is removed (null)
-    $this->assertFalse($this->user->can($data['ability'], $data['class']));
+    ray()->showQueries(
+        fn () => $this->assertFalse($this->user->can($data['ability'], $data['class'])),
+    );
 
     // This should match the permission based on the scoping we're testing
     BouncerFacade::scope()->onceTo($data['scope'], function () use ($data) {
